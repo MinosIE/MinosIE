@@ -22,8 +22,6 @@ import { resumeMarkdown } from '../data/resumeSource'
  *  - Anticipation/Follow-Through：开场预备停顿、段落间呼吸、定稿 slow-out 收尾；
  *  - Appeal：光标加入轻微呼吸（scale）动效。
  */
-const emit = defineEmits<{ (e: 'back'): void }>()
-
 /** 去掉 frontmatter，只保留真正的简历正文 */
 function stripFrontmatter(md: string): string {
   const m = md.match(/^---\n[\s\S]*?\n---\n?/)
@@ -581,7 +579,6 @@ onUnmounted(() => {
     <div class="toolbar" @click.stop>
       <button v-if="playing" class="tb" @click="skip">跳过</button>
       <button v-else class="tb" @click="replay">↻ 重播</button>
-      <button class="tb" @click="emit('back')">← 返回</button>
     </div>
   </div>
 </template>
