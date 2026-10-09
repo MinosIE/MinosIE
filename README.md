@@ -10,7 +10,7 @@
 
 **前端** · React · Next.js · Vue 3 · Solid.js · TypeScript · Tailwind / Ant Design / TDesign · Three.js · GSAP
 
-**后端** · Node.js（Express / Fastify）· MySQL · Redis · TypeORM · JWT · 腾讯云 COS
+**后端** · Node.js（Express / Fastify）· MySQL · Redis · TypeORM · JWT · 云环境 COS
 
 **跨端 & 桌面** · 微信小程序（Taro / uni-app）· 微信云函数 · Tauri
 
