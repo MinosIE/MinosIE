@@ -6,7 +6,13 @@
  * 动画简历页面会把它逐字「打」出来，再渲染成排版良好的简历。
  */
 
-import { profile, skills, experiences, projects, openSources, educations } from './resume'
+import { profile, skills, experiences, projects, openSources } from './resume'
+
+/** 点击邮箱唤起邮件客户端，并预填主题与正文文案（真实链接只在最终 HTML 注入，不进打字稿） */
+export const resumeMailto =
+  `mailto:${profile.email}` +
+  `?subject=${encodeURIComponent('关于您的动画简历')}` +
+  `&body=${encodeURIComponent('你好，我是（请填您的称呼），看到您的动画简历很感兴趣，想和您聊聊～（可补充来意：合作 / 招聘 / 技术交流）')}`
 
 /** 由 resume.ts 派生 Markdown 源码 */
 export function buildResumeMarkdown(): string {
@@ -58,17 +64,12 @@ export function buildResumeMarkdown(): string {
     )
     .join('\n\n')
 
-  const eduBlocks = educations
-    .map((e) => `- **${e.school}** · ${e.degree} · ${e.major}`)
-    .join('\n')
-
   return [
     fm,
     '',
-    '# 王玉兴',
+    `# 坚冰 · *本科·软件工程*  [✉️ ${profile.email}](mailto)`,
     '',
-    `${profile.intention.join(' / ')} · ${profile.city} · ${profile.experienceYears} 年前端经验`,
-    `✉️ ${profile.email}`,
+    `${profile.intention.join(' / ')} · ${profile.city} · ${profile.experienceYears} 年开发经验`,
     '',
     '# 个人简介',
     '',
@@ -92,11 +93,12 @@ export function buildResumeMarkdown(): string {
     '',
     ossBlocks,
     '',
-    '# 教育经历',
-    '',
-    eduBlocks,
-    '',
   ].join('\n')
 }
 
 export const resumeMarkdown = buildResumeMarkdown()
+
+/** 打字稿里的 (mailto) 只是短占位符；渲染成 HTML 后调用本函数替换为真实 mailto 链接 */
+export function injectResumeMailto(html: string): string {
+  return html.replace('href="mailto"', `href="${resumeMailto.replace(/&/g, '&amp;')}"`)
+}

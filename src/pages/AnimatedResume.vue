@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref, nextTick } from 'vue'
+import { onMounted, onUnmounted, ref, computed, nextTick } from 'vue'
 import Prism from 'prismjs'
 import 'prismjs/components/prism-css'
 import { compile } from '../utils/markdown'
-import { resumeMarkdown } from '../data/resumeSource'
+import { resumeMarkdown, injectResumeMailto } from '../data/resumeSource'
 
 /**
  * 动画简历：忠实复刻 jirengu「会动的简历」（github.com/jirengu-inc/animating-resume）
@@ -33,7 +33,7 @@ const fullMarkdown = stripFrontmatter(resumeMarkdown)
 
 /** 三段 CSS：基础(含开场白+高亮配色) → 注释 → 简历美化（均用 .anim-resume 前缀作用域） */
 const SEG0 = `/*
-* 大家好，我是王玉兴
+* 大家好，我是坚冰
 * 资深前端工程师 · 前端工程化 / AI 工具链
 * 受 jirengu「会动的简历」启发，我也来写一份会动的简历
 */
@@ -50,7 +50,7 @@ const SEG0 = `/*
   --tok-comment: #6a9955;
 }
 
-/* 给所有元素加上属性过渡，让逐条注入的样式平滑落位（参考案例的顺滑感） */
+/* 给所有元素加上属性过渡，让逐条注入的样式平滑落位 */
 .anim-app * {
   transition: all var(--speed);
 }
@@ -156,6 +156,28 @@ const SEG2 = `/* 再给 HTML 加点样式 —— 变量 · 嵌套 · calc · 颜
       border-left: 0;
       padding: 0;
       background: none;
+      /* 姓名标题内的邮箱链接：明显小于姓名，并弱化区分 */
+      a {
+        font-size: .42em;
+        font-weight: 500;
+        letter-spacing: 0;
+        color: var(--brand-deep);
+        opacity: .85;
+        vertical-align: middle;
+        margin-left: .4em;
+        text-decoration: underline;
+        text-underline-offset: .2em;
+      }
+      /* 姓名标题内的学历（em）：明显小于姓名，弱化区分 */
+      em {
+        font-size: .55em;
+        font-style: normal;
+        font-weight: 500;
+        letter-spacing: 0;
+        color: var(--brand-deep);
+        opacity: .9;
+        vertical-align: middle;
+      }
     }
     /* 依次为各分区配主题色与图标（文字色由颜色函数自动加深） */
     &:nth-of-type(2) { border-left-color: var(--green); color: color-mix(in srgb, var(--green), #000 20%); }
@@ -302,11 +324,17 @@ const phases: Phase[] = [
   { kind: 'style', text: SEG2 },
 ]
 
-const renderedHtml = compile(fullMarkdown).html
+// 右侧实时渲染：随 Markdown 逐字打出，增量编译成 HTML（不再显示原始源码）。
+// 打字阶段在末尾追加光标；SEG2 阶段注入的 CSS 会同步让这份简历变美。
+const liveHtml = computed(() => {
+  const html = injectResumeMailto(compile(currentMarkdown.value).html)
+  return playing.value && activePane.value === 'md'
+    ? `${html}<span class="cursor dark"></span>`
+    : html
+})
 
 const currentMarkdown = ref('')
 const highlightedStyle = ref('') // 增量高亮结果（已完成行缓存 + 当前行实时高亮）
-const enableHtml = ref(false)
 const playing = ref(true)
 const done = ref(false)
 const activePane = ref<'style' | 'md'>('style')
@@ -436,7 +464,6 @@ function advance() {
   }
   const ph = phases[phaseIdx]
   if (ph.kind === 'html') {
-    enableHtml.value = true
     activePane.value = 'md'
     phaseIdx++
     delay = 1300 // 段间停顿（Anticipation）
@@ -508,7 +535,6 @@ function skip() {
   currentMarkdown.value = fullMarkdown
   highlightedStyle.value = Prism.highlight(SEG0 + SEG1 + SEG2, Prism.languages.css, 'css')
   highlightedCurrent.value = ''
-  enableHtml.value = true
   phaseIdx = phases.length
   done.value = true
   playing.value = false
@@ -529,7 +555,6 @@ function replay() {
   pending = ''
   blockOpen = false
   blockJustClosed = false
-  enableHtml.value = false
   phaseIdx = 0
   charIdx = 0
   done.value = false
@@ -567,12 +592,8 @@ onUnmounted(() => {
 
     <!-- 右侧：先逐字显示 Markdown，再渲染成简历 -->
     <section ref="resumePane" class="resumeEditor">
-      <pre v-if="!enableHtml" class="md">{{ currentMarkdown }}<span
-        v-if="playing && activePane === 'md'"
-        class="cursor dark"
-      ></span></pre>
-
-      <div v-else class="anim-resume" v-html="renderedHtml"></div>
+      <!-- 右侧：随 Markdown 逐字打出实时渲染成简历（SEG2 阶段 CSS 注入后同步变美） -->
+      <div class="anim-resume" v-html="liveHtml"></div>
     </section>
 
     <!-- 工具栏 -->

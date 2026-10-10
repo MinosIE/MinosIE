@@ -78,13 +78,13 @@ export interface Education {
 }
 
 export const profile: Profile = {
-  name: '王玉兴',
+  name: '坚冰',
   phone: '15240235709',
   email: '417913012@qq.com',
   gender: '男',
   age: 36,
   experienceYears: 16,
-  intention: ['前端主管', '前端全栈工程师', 'Agent 全栈开发'],
+  intention: ['前端全栈', 'Agent 开发'],
   city: '上海',
   summary:
     '16 年前端开发经验，覆盖电商 / 金融 / 教育 / 汽车行业，曾带领 20 人前端团队，主导 20+ 项目从 0 到 1 交付。' +
@@ -169,7 +169,7 @@ export const experiences: Experience[] = [
 
 export const projects: Project[] = [
   {
-    name: '东风奕派汽车官网',
+    name: '某汽车官网',
     role: '前端开发',
     desc: '接手供应商遗留项目，负责官网车型 / 权益 / 参数展示、预约试驾数据提交等核心模块的全面改造。',
     achievements: [
@@ -322,7 +322,7 @@ export const metrics: Metric[] = [
   { id: 'exp', label: '前端经验', value: 16, suffix: ' 年', ratio: 100, desc: '覆盖电商 / 金融 / 教育 / 汽车' },
   { id: 'projects', label: '从 0 到 1 项目', value: 20, suffix: '+', ratio: 100, desc: '主导交付' },
   { id: 'team', label: '带领前端团队', value: 20, suffix: ' 人', ratio: 80, desc: '敏捷 / MVP 管理' },
-  { id: 'lighthouse', label: 'Lighthouse 评分', value: 95, ratio: 95, desc: '东风奕派官网', accent: true },
+  { id: 'lighthouse', label: 'Lighthouse 评分', value: 95, ratio: 95, desc: '某汽车官网', accent: true },
   { id: 'ci', label: 'CI 耗时下降', value: 95, suffix: '%', ratio: 95, desc: 'ESLint → Biome', accent: true },
   { id: 'lcp', label: '页面 LCP 优化', value: 80, suffix: '%', ratio: 80, desc: '5s → <1s', accent: true },
   { id: 'reuse', label: '组件复用率', value: 90, suffix: '%', ratio: 90, desc: '官网重构后', accent: true },

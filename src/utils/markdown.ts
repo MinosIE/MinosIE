@@ -225,7 +225,7 @@ export function parseMarkdown(src: string): Block[] {
     while (
       i < lines.length &&
       lines[i].trim() &&
-      !/^(#{1,6}\s|[-*+]\s|\d+\.\s|>|\||```|-{3,}$)/.test(lines[i].trim())
+      !/^(#{1,6}\s|[-*+]\s|\d+\.\s|>|```|-{3,}$)/.test(lines[i].trim())
     ) {
       buf.push(lines[i].trim())
       i++
