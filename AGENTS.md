@@ -8,7 +8,7 @@
 
 ## 0. 快速上手（30 秒版）
 
-- **项目一句话**：MinosIE（坚冰）的 GitHub 个人主页仓库，正文是一份「会动的简历」——深色屏上左侧逐字打出 CSS、右侧实时渲染简历 HTML，纯静态单页，部署在 GitHub Pages。
+- **项目一句话**：MinosIE（坚冰）的 GitHub 个人主页仓库，正文是一份「会动的简历」——深色屏上左侧逐字打出 CSS，右侧先逐字写出 Markdown 简历源码、再渲染成 HTML 并注入样式完成美化，纯静态单页，部署在 GitHub Pages。
 - **技术栈**：Vue 3.4.38 · TypeScript 5.5.4 · Vite 5.4.3 · @vitejs/plugin-vue 5.1.3 · prismjs 1.29（css 语法）+ 自研 Markdown 解析器。
 - **命令**（均来自 `package.json`）：
 

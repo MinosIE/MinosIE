@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref, computed, nextTick } from 'vue'
+import { onMounted, onUnmounted, ref, nextTick } from 'vue'
 import Prism from 'prismjs'
 import 'prismjs/components/prism-css'
 import { compile } from '../utils/markdown'
@@ -90,6 +90,7 @@ const SEG0 = `/*
   transition: transform var(--speed) ease;
   -webkit-transform: rotateY(10deg) translateZ(-100px) ;
           transform: rotateY(10deg) translateZ(-100px) ;
+  box-shadow: 0 10px 26px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.2), 0 0 18px rgba(255,255,255,.2), 0 0 52px rgba(255,255,255,.26);
 }
 
 /* 接下来我给自己准备一个编辑器 */
@@ -324,17 +325,12 @@ const phases: Phase[] = [
   { kind: 'style', text: SEG2 },
 ]
 
-// 右侧实时渲染：随 Markdown 逐字打出，增量编译成 HTML（不再显示原始源码）。
-// 打字阶段在末尾追加光标；SEG2 阶段注入的 CSS 会同步让这份简历变美。
-const liveHtml = computed(() => {
-  const html = injectResumeMailto(compile(currentMarkdown.value).html)
-  return playing.value && activePane.value === 'md'
-    ? `${html}<span class="cursor dark"></span>`
-    : html
-})
+// 打字稿里只写短占位符 (mailto)；渲染成 HTML 后替换为真实 mailto，避免长 URL 在打字阶段暴露
+const renderedHtml = injectResumeMailto(compile(fullMarkdown).html)
 
 const currentMarkdown = ref('')
 const highlightedStyle = ref('') // 增量高亮结果（已完成行缓存 + 当前行实时高亮）
+const enableHtml = ref(false)
 const playing = ref(true)
 const done = ref(false)
 const activePane = ref<'style' | 'md'>('style')
@@ -464,6 +460,7 @@ function advance() {
   }
   const ph = phases[phaseIdx]
   if (ph.kind === 'html') {
+    enableHtml.value = true // 切换右侧：Markdown 源码 → 渲染后的简历 HTML
     activePane.value = 'md'
     phaseIdx++
     delay = 1300 // 段间停顿（Anticipation）
@@ -535,6 +532,7 @@ function skip() {
   currentMarkdown.value = fullMarkdown
   highlightedStyle.value = Prism.highlight(SEG0 + SEG1 + SEG2, Prism.languages.css, 'css')
   highlightedCurrent.value = ''
+  enableHtml.value = true
   phaseIdx = phases.length
   done.value = true
   playing.value = false
@@ -555,6 +553,7 @@ function replay() {
   pending = ''
   blockOpen = false
   blockJustClosed = false
+  enableHtml.value = false
   phaseIdx = 0
   charIdx = 0
   done.value = false
@@ -592,8 +591,12 @@ onUnmounted(() => {
 
     <!-- 右侧：先逐字显示 Markdown，再渲染成简历 -->
     <section ref="resumePane" class="resumeEditor">
-      <!-- 右侧：随 Markdown 逐字打出实时渲染成简历（SEG2 阶段 CSS 注入后同步变美） -->
-      <div class="anim-resume" v-html="liveHtml"></div>
+      <pre v-if="!enableHtml" class="md">{{ currentMarkdown }}<span
+        v-if="playing && activePane === 'md'"
+        class="cursor dark"
+      ></span></pre>
+
+      <div v-else class="anim-resume" v-html="renderedHtml"></div>
     </section>
 
     <!-- 工具栏 -->
