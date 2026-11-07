@@ -4,15 +4,15 @@
  * 关键设计：Markdown 由 resume.ts（简历事实源头）**派生生成**，而不是另写一份文案，
  * 保证页面与简历口径一致（见 Agent.md 同步规则）。
  * 动画简历页面会把它逐字「打」出来，再渲染成排版良好的简历。
+ *
+ * 公开版本：本仓库部署在 GitHub Pages，源码与前端 bundle 任何人可见，
+ * 因此不写入手机号 / 邮箱等私人联系方式，联系入口统一指向 GitHub 主页。
  */
 
 import { profile, skills, experiences, projects, openSources } from './resume'
 
-/** 点击邮箱唤起邮件客户端，并预填主题与正文文案（真实链接只在最终 HTML 注入，不进打字稿） */
-export const resumeMailto =
-  `mailto:${profile.email}` +
-  `?subject=${encodeURIComponent('关于您的动画简历')}` +
-  `&body=${encodeURIComponent('你好，我是（请填您的称呼），看到您的动画简历很感兴趣，想和您聊聊～（可补充来意：合作 / 招聘 / 技术交流）')}`
+/** 公开联系方式：打字稿里只写短占位符 (contact)，渲染成 HTML 后再注入真实链接 */
+export const resumeContactUrl = 'https://github.com/MinosIE'
 
 /** 由 resume.ts 派生 Markdown 源码 */
 export function buildResumeMarkdown(): string {
@@ -22,8 +22,6 @@ export function buildResumeMarkdown(): string {
     `role: 前端工程师 / 前端主管`,
     `city: ${profile.city}`,
     `experience: ${profile.experienceYears} 年以上`,
-    `phone: ${profile.phone}`,
-    `email: ${profile.email}`,
     'intention:',
     ...profile.intention.map((v) => `  - ${v}`),
     '---',
@@ -67,7 +65,7 @@ export function buildResumeMarkdown(): string {
   return [
     fm,
     '',
-    `# 坚冰 · *本科·软件工程*  [✉️ ${profile.email}](mailto)`,
+    `# ${profile.name} · *本科·软件工程*  [GitHub @MinosIE](contact)`,
     '',
     `${profile.intention.join(' / ')} · ${profile.city} · ${profile.experienceYears} 年以上开发经验`,
     '',
@@ -98,7 +96,7 @@ export function buildResumeMarkdown(): string {
 
 export const resumeMarkdown = buildResumeMarkdown()
 
-/** 打字稿里的 (mailto) 只是短占位符；渲染成 HTML 后调用本函数替换为真实 mailto 链接 */
-export function injectResumeMailto(html: string): string {
-  return html.replace('href="mailto"', `href="${resumeMailto.replace(/&/g, '&amp;')}"`)
+/** 打字稿里的 (contact) 只是短占位符；渲染成 HTML 后调用本函数替换为公开联系方式 */
+export function injectResumeContact(html: string): string {
+  return html.replace('href="contact"', `href="${resumeContactUrl}"`)
 }

@@ -154,7 +154,7 @@ SEG0 CSS → Markdown 全文 → SEG1 CSS → 切 HTML 渲染 → SEG2 CSS → �
 | 改什么 | 必须同步改 | 漏了的后果 |
 |---|---|---|
 | 简历内容（姓名 / 公司 / 项目 / 技能） | `data/resume.ts` → `data/resumeSource.ts` 拼接逻辑（共 2 处） | 页面不显示新内容，或排版错乱 |
-| 姓名 | `resume.ts` profile.name + `resumeSource.ts:68` 硬编码 `'# 王玉兴'` + `AnimatedResume.vue` SEG0 开场白 + `index.html` `<title>`（共 4 处） | 名字前后不一致 |
+| 姓名 | `resume.ts` profile.name + `resumeSource.ts:68` 硬编码 `'# 坚冰'` + `AnimatedResume.vue` SEG0 开场白 + `index.html` `<title>`（共 4 处） | 名字前后不一致 |
 | 简历分区（`# 个人简介` 等一级 / 二级标题）增删或换序 | `AnimatedResume.vue` SEG2 里 `h2:nth-of-type(n)` 的主题色与 emoji 图标（共 n 处） | 分区配色与图标错位到别的标题上 |
 | Markdown 语法支持 | `utils/markdown.ts` 的 `parseMarkdown`（块级）+ `parseInline`/`renderInline`（行内）+ `renderBlocks`（共 3 处） | 打字阶段不报错但最终 HTML 缺内容 |
 | 主题配色 | SEG2 内 `.anim-resume` 的 CSS 变量 + SEG0 内 `.anim-app` 的 `--bg`/`--fg`（共 2 处） | 动画背景与最终态不同色 |
@@ -212,7 +212,7 @@ SEG0 CSS → Markdown 全文 → SEG1 CSS → 切 HTML 渲染 → SEG2 CSS → �
 | Markdown 引擎 | `src/utils/markdown.ts` | 自研解析 / 渲染与导出函数 | 🟡 | 加语法 / 渲染异常时 |
 | 引擎说明 | `src/pages/AnimatedResume.vue` 文件头注释（1–24 行） | 动画设计意图与 Twelve Principles 取舍 | 🟡 | 调动画节奏前 |
 
-> 注：`src/data/resume.ts` 头部注释提到的 `docs/王玉兴-前端工程师.docx` 与 `Agent.md` 在本仓库**并不存在**，按本文件执行即可。
+> 注：`src/data/resume.ts` 头部注释提到的 `docs/坚冰-前端工程师.docx` 与 `Agent.md` 在本仓库**并不存在**，按本文件执行即可。
 
 ---
 
@@ -233,13 +233,13 @@ SEG0 CSS → Markdown 全文 → SEG1 CSS → 切 HTML 渲染 → SEG2 CSS → �
 | 位置 | 问题 | 影响 |
 |---|---|---|
 | `src/data/resume.ts` | `sections`、`metrics`、`codeDemos`、`architectures` 四个导出**无任何消费方**（自 `aboutMe` 同类项目带入） | 死代码；`noUnusedLocals` 只管局部变量，导出不受约束，故不报错 |
-| `src/data/resumeSource.ts` | `# 王玉兴`（68 行）与 `role: 前端工程师 / 前端主管`（16 行）为硬编码，未从 `profile` 派生 | 违反单一数据源原则，改名需多处找 |
+| `src/data/resumeSource.ts` | `# 坚冰`（68 行）与 `role: 前端工程师 / 前端主管`（16 行）为硬编码，未从 `profile` 派生 | 违反单一数据源原则，改名需多处找 |
 | `src/data/resume.ts` 头注释 | 指向不存在的 docx 与 `Agent.md` | 误导 Agent（本文件已写明） |
 | 全局 | 无 lint、无测试、无 CI 质量关卡 | 只有 `npm run build` 一道防线 |
 
 ### 5.4 已知问题
 
-1. **身份不一致**：`README.md` 与 `index.html` 是「坚冰 / MinosIE」，而 `resume.ts` 的 `profile.name` 为「王玉兴」、`experienceYears: 16`，SEG0 开场白也写死「大家好，我是王玉兴」。**对外发布前必须统一口径**，否则简历与主页不是一个身份。
+1. **身份口径**：`README.md`、`index.html`、`resume.ts` 与 SEG0 开场白已统一为「坚冰 / MinosIE」、`experienceYears: 10`。公开版本只保留化名，不写真实身份与联系方式；求职用的详细事实在另仓维护，两边详略不同需定期核对。
 2. **`prefers-reduced-motion` 未响应**：有意为之（与原版一致），但无障碍诉求下属于已知取舍。
 
 ---

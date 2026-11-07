@@ -5,6 +5,11 @@
  * 1. 简历全部事实的「单一数据源」，页面内容（含派生的 Markdown）都由这里的类型约束驱动。
  * 2. 避免硬编码散落在组件里；改动简历内容只改本文件对应字段。
  *
+ * 公开版本约定（本仓库部署在 GitHub Pages，源码与产物均对外可见）：
+ * - 不写真实姓名 / 手机号 / 邮箱 / 年龄 / 性别 / 学校名 / 雇主名 / 客户品牌名。
+ * - 组织规模与业务规模只做定性或量级描述，避免与公司、客户形成可关联的组合。
+ * - 技术栈、技术性能指标、个人开源作品可保留；模糊处理是「降精度」，不新增任何事实。
+ *
  * 同步约定：修改简历「专业技能 / 项目经历」后，回到本文件更新对应字段，
  * 并同步 data/resumeSource.ts 的拼接逻辑（见 AGENTS.md 联动表）。
  */
@@ -26,13 +31,9 @@ export interface SkillGroup {
   points: string[];
 }
 
-/** 个人信息 */
+/** 个人信息（公开版只保留展示所需字段，不含任何联系方式与身份信息） */
 export interface Profile {
   name: string;
-  phone: string;
-  email: string;
-  gender: string;
-  age: number;
   experienceYears: number;
   intention: string[];
   city: string;
@@ -69,7 +70,7 @@ export interface OpenSource {
   link?: string;
 }
 
-/** 教育经历 */
+/** 教育经历（公开版隐去校名） */
 export interface Education {
   school: string;
   degree: string;
@@ -78,76 +79,42 @@ export interface Education {
 
 export const profile: Profile = {
   name: "坚冰",
-  phone: "15240235709",
-  email: "417913012@qq.com",
-  gender: "男",
-  age: 36,
   experienceYears: 10,
   intention: ["前端全栈", "Agent 开发"],
   city: "上海",
   summary:
-    "10年以上研发经验，覆盖电商 / 金融 / 教育 / 汽车行业，曾带领 20 人前端团队，主导 20+ 项目从 0 到 1 交付。主攻前端：覆盖 PC / H5 / 小程序 / 桌面端 / 浏览器插件及前端工程化；兼顾后端：具备 Node.js 全栈开发能力，熟悉 Redis / 消息队列 / 微服务 / 可观测等后端体系，能基于 Java / Go 承接高并发业务（秒杀扣减、异步削峰、容器化部署）。擅长通过敏捷 / MVP 模式统筹团队，保障项目按时高质量交付，可快速对接跨部门协作，为业务落地提供稳定的技术支撑。",
+    "10 年以上研发经验，覆盖电商 / 金融 / 教育 / 汽车等行业，曾带领前端团队，主导多个项目从 0 到 1 交付。主攻前端：覆盖 PC / H5 / 小程序 / 桌面端 / 浏览器插件及前端工程化；兼顾后端：具备 Node.js 全栈开发能力，熟悉 Redis / 消息队列 / 微服务 / 可观测等后端体系，能基于 Java / Go 承接高并发业务（秒杀扣减、异步削峰、容器化部署）。擅长通过敏捷 / MVP 模式统筹团队，保障项目按时高质量交付，可快速对接跨部门协作。",
 };
 
 export const skills: SkillGroup[] = [
   {
     id: "framework",
-    title: "前端框架",
+    title: "框架与工程化",
     level: "master",
-    score: 95,
+    score: 93,
     points: [
       "Vue 3 (Composition API)",
       "React 18 (Hooks)",
-      "Svelte",
-      "Solid（编译时框架）",
-    ],
-  },
-  {
-    id: "engineering",
-    title: "前端工程化",
-    level: "master",
-    score: 92,
-    points: [
-      "Monorepo (pnpm workspace)",
-      "CLI 工具开发",
+      "Module Federation / 微前端 (Qiankun)",
+      "Monorepo (pnpm workspace) + CLI 脚手架",
       "Biome 代码规范统一",
-      "私仓管理 (Verdaccio)",
+      "CI / CD 流水线（灰度发布）",
+      "AI 提效：CodeReview / D2C / 类型生成",
     ],
   },
   {
-    id: "language",
-    title: "编程语言",
+    id: "backend",
+    title: "后端 / 全栈",
     level: "familiar",
-    score: 80,
+    score: 84,
     points: [
-      "TypeScript（编译器原理 / V8 优化）",
-      "AssemblyScript",
-      "Rust（Webpack 插件 / Loader）",
-      "Java / Python",
-    ],
-  },
-  {
-    id: "architecture",
-    title: "架构设计",
-    level: "familiar",
-    score: 82,
-    points: [
-      "IOC 容器与函数式编程",
-      "SOLID 设计原则",
-      "SPA / MPA",
-      "同构渲染 (SSR / SSG)",
-    ],
-  },
-  {
-    id: "microfrontend",
-    title: "微前端",
-    level: "familiar",
-    score: 78,
-    points: [
-      "Module Federation",
-      "Single-spa / Qiankun",
-      "iframe 隔离",
-      "Web Components / 路由集成",
+      "Node.js（Koa / Express）+ Prisma + MySQL",
+      "Java（Spring Boot）/ Go（goroutine 高并发）",
+      "Redis（缓存 / 分布式锁 / Lua 原子扣减）",
+      "Kafka 消息队列（削峰 / 异步落库）",
+      "高并发（秒杀限流 / 幂等 / 防超卖）",
+      "Spring Cloud 微服务（Nacos / Gateway）+ 分布式事务 Seata / TCC / Saga",
+      "架构设计：IOC / SOLID、分层与领域建模、服务边界划分",
     ],
   },
   {
@@ -156,21 +123,22 @@ export const skills: SkillGroup[] = [
     level: "familiar",
     score: 85,
     points: [
-      "性能监控 SDK (LCP / CLS / FID)",
-      "CSS GPU 加速",
-      "页面加载性能体系",
+      "前端性能：监控 SDK (LCP / CLS / FID)、CSS GPU 加速、页面加载性能体系",
+      "接口与慢查询优化：索引 / 覆盖索引、深分页游标、读写分离",
+      "缓存策略：多级缓存、命中率与击穿 / 雪崩防护",
+      "JVM / GC 与并发调优、异步化削峰",
     ],
   },
   {
-    id: "efficiency",
-    title: "工程提效",
+    id: "interaction",
+    title: "交互与体验",
     level: "familiar",
-    score: 83,
+    score: 82,
     points: [
-      "AI 自动生成类型定义",
-      "Vue ↔ React 代码转换",
-      "AI CodeReview",
-      "D2C（设计稿转代码）",
+      "CSS 动效 / 过渡 / 微交互（滚动叙事、状态反馈）",
+      "表单与操作体验：防重复点击、实时校验与余额 / 库存反馈",
+      "Canvas / 可视化",
+      "编辑体验：推文排版 + 代码高亮一体化（AI 助手插件）",
     ],
   },
   {
@@ -183,31 +151,32 @@ export const skills: SkillGroup[] = [
       "N8N / Flowise 编排",
       "RAG 知识库",
       "本地 LLM 部署 (Ollama)",
+      "Agent 对接后端业务系统（MCP 工具 / API 集成）",
     ],
   },
 ];
 
 export const experiences: Experience[] = [
   {
-    company: "上海傲文网络技术有限公司",
+    company: "上海某网络技术公司",
     role: "前端主管",
     period: "2022.09 - 至今",
     highlights: [
       "主导多个项目从原生 JS 到 Vue3 + Vite + TypeScript 的架构升级",
       "代码规范从 ESLint 迁移至 Biome，CI 耗时降低 95%",
       "搭建自动化发布流水线，发布时间从 20 分钟降至 2 分钟",
-      "封装 30+ 通用业务组件，覆盖表单 / 列表 / 弹窗，复用率超 70%",
+      "沉淀通用业务组件与设计规范，提升跨项目复用",
       "通过图片压缩 + 性能 SDK 将页面 LCP 优化 80%+",
-      "带领 20 人前端团队，建立技术分享与 CodeReview 机制",
+      "带领前端团队，建立技术分享与 CodeReview 机制",
     ],
   },
 ];
 
 export const projects: Project[] = [
   {
-    name: "某汽车官网",
+    name: "某车企官网",
     role: "前端开发",
-    desc: "接手供应商遗留项目，负责官网车型 / 权益 / 参数展示、预约试驾数据提交等核心模块的全面改造。",
+    desc: "接手遗留项目，负责官网车型 / 权益 / 参数展示、预约试驾提交等核心模块的全面改造。",
     achievements: [
       "组件化重构：组件复用率提升至 90%，开发与维护成本显著下降",
       "性能优化：页面加载从 5s 降至 1s 以内，Lighthouse 评分达 95",
@@ -221,30 +190,88 @@ export const projects: Project[] = [
       "vite-plugin-pages",
       "vite-plugin-vue-layouts",
     ],
-    badges: ["Lighthouse 评分 95", "LCP 提速 80%", "复用率 90%"],
+    badges: ["Lighthouse 95", "加载提速 80%", "复用率 90%"],
   },
   {
-    name: "微信群聊监控工具",
+    name: "社群舆情监控工具",
     role: "独立全栈开发",
-    desc: "面向车友社群的舆情监控工具，独立完成前后端设计、开发与部署运维。",
+    desc: "面向社群运营的舆情监控工具，独立完成前后端设计、开发与部署运维。",
     achievements: [
-      "实时群消息监控：敏感词命中即触发邮件推送运营处置，被动巡查转主动预警",
-      "第三方页面巡检：Puppeteer 无头浏览器轮询业务依赖页面，异常自动告警",
-      "工程保障：PM2 守护 7×24 常驻进程，Prisma 持久化，敏感词去重防刷",
-      "业务成果：监控 100+ 车友群，配置 50+ 敏感词，节省运营约 90% 舆情巡查投入",
+      "实时消息监控：关键词命中即触发邮件告警，被动巡查转主动预警",
+      "页面巡检：无头浏览器定时轮询依赖页面，异常自动告警",
+      "工程保障：常驻进程守护、配置与告警持久化、命中去重防刷",
+      "业务成效：覆盖大量业务社群，节省大部分日常巡查投入",
     ],
     tech: ["vue3", "vite", "node.js", "pm2", "puppeteer", "chatlog", "prisma"],
-    badges: ["监控 100+ 群", "节省 90% 投入"],
+    badges: ["多群实时监控", "主动预警"],
   },
   {
-    name: "AI 助手 Chrome 插件",
+    name: "营销活动平台",
+    role: "全栈开发",
+    desc: "面向多业务线的营销活动平台（抽奖 / 积分秒杀），独立负责前后端，沉淀可复用的「安全扣减 + 最终一致 + 限流降级」能力。",
+    achievements: [
+      "高并发骨架：Redis + Lua 原子扣减 + 分布式锁 / 乐观锁防超发；限流熔断；本地消息表 + MQ + 死信队列 + 定时对账保证最终一致",
+      "概率与一致性：防预测随机数、概率合计校验、并发抢同一奖品加锁；热点缓存防雪崩",
+      "外部积分对接：以兑换单号幂等预扣冻结 → 确认 / 回滚，双重防超扣；超时按单号查状态而非盲重试",
+      "前端交互：防重复点击 + 实时余额 / 库存反馈；CDN 抗峰值；签名 / 防重放 / 数据权限校验",
+    ],
+    tech: [
+      "vue3",
+      "vite",
+      "typescript",
+      "h5",
+      "java",
+      "spring boot",
+      "redis",
+      "mysql",
+      "mybatis",
+      "kafka",
+      "sentinel",
+      "nginx",
+    ],
+    badges: ["Redis + Lua 原子扣减", "最终一致对账兜底"],
+  },
+  {
+    name: "中后台管理系统（RBAC 权限 + 复杂业务）",
+    role: "全栈开发",
+    desc: "运营 / 管理后台（全栈）：前端 + 按域拆分的微服务；重点在权限正确性、数据隔离、查询性能与分布式事务一致性。",
+    achievements: [
+      "RBAC 四层权限模型（用户-角色-权限-菜单）+ 接口级鉴权 + 按钮级权限；数据权限按组织 / 角色行级过滤",
+      "微服务：注册 / 配置中心、网关统一鉴权限流、服务调用、Seata 分布式事务、链路追踪",
+      "复杂查询性能：多表动态 SQL、复合 / 覆盖索引、深分页游标、分库分表 + 读写分离；事务传播与最终一致",
+      "安全与导出：越权 / XSS / SQL 注入防护 + 审计留痕；异步导出防 OOM 与幂等限流",
+    ],
+    tech: [
+      "vue3",
+      "vite",
+      "typescript",
+      "element plus",
+      "java",
+      "spring boot",
+      "spring cloud",
+      "spring security",
+      "mybatis",
+      "mysql",
+      "redis",
+      "kafka",
+      "easyexcel",
+      "nacos",
+      "gateway",
+      "openfeign",
+      "seata",
+      "skywalking",
+    ],
+    badges: ["RBAC 权限模型", "微服务 / 分布式事务"],
+  },
+  {
+    name: "AI 助手浏览器插件",
     role: "前端开发",
-    desc: "公司统一采购大模型 Token，通过浏览器插件分发给内容团队，并扩展微信推文编辑能力。",
+    desc: "团队统一接入大模型能力，通过浏览器插件分发给内容团队，并扩展图文内容编辑能力。",
     achievements: [
       "插件基建：Vue 3 + TypeScript + @crxjs/vite-plugin，集成多模型对话与 Prompt 模板库",
-      "微信推文编辑：内置 PrismJS 代码高亮，AI 写作与排版一体化",
-      "MCP 升级：演进为 MCP Client，经 SSE 连接内部 3 个业务 MCP Server（CRM / 数仓 / 工单）",
-      "业务成果：覆盖 10+ 内容运营，AI 辅助写作 100+ 次 / 天，推文编辑由半天缩短至 20 分钟",
+      "图文编辑：内置代码高亮，AI 写作与排版一体化",
+      "MCP 升级：演进为 MCP Client，经 SSE 连接多个业务 MCP Server",
+      "业务成效：服务内容团队，AI 辅助日常写作，单篇编辑耗时大幅缩短",
     ],
     tech: [
       "typescript",
@@ -255,7 +282,7 @@ export const projects: Project[] = [
       "prismjs",
       "sass",
     ],
-    badges: ["100+ 次/天", "MCP Client"],
+    badges: ["MCP Client", "多模型对话"],
   },
   {
     name: "前端工程化体系",
@@ -266,7 +293,7 @@ export const projects: Project[] = [
       "规范统一：代码规范从 ESLint + Prettier 迁移至 Biome（Rust 实现，单命令替代两套工具），CI 耗时降低 95%",
       "发布流水线：搭建自动化发布流水线，发布时间从 20 分钟降至 2 分钟",
       "基建治理：pnpm workspace Monorepo + Verdaccio 私仓，统一内部组件与工具包的发布与版本管理",
-      "研发提效：自研 wd-cli，以一行命令拉起符合规范的项目（规范配置 + Git Hooks + 接口封装 + 组件库）",
+      "研发提效：自研 CLI 脚手架，以一行命令拉起符合规范的项目（规范配置 + Git Hooks + 接口封装 + 组件库）",
     ],
     tech: [
       "pnpm workspace",
@@ -280,26 +307,13 @@ export const projects: Project[] = [
     badges: ["CI 提速 95%", "发布提速 90%"],
   },
   {
-    name: "通用组件库与设计体系",
-    role: "组件库负责人",
-    desc: "面向团队沉淀通用业务组件库与前端设计规范，统一交互与视觉标准，减少业务侧重复开发。",
-    achievements: [
-      "组件沉淀：封装 30+ 通用业务组件，覆盖表单 / 列表 / 弹窗等高频业务场景",
-      "复用成效：组件跨项目复用率超 70%，显著降低重复开发与维护成本",
-      "规范沉淀：形成统一的交互与视觉规范，作为业务侧组件选型与实现的默认依据",
-      "发布治理：通过 Verdaccio 私仓统一组件包的版本发布与升级",
-    ],
-    tech: ["Vue 3", "TypeScript", "组件库", "Verdaccio", "pnpm workspace"],
-    badges: ["30+ 组件", "复用率 70%+"],
-  },
-  {
     name: "MCP 平台与 AI 服务端集成",
     role: "AI 能力建设者",
-    desc: "把 AI 从「单点问答」扩展为「能调用真实业务能力」的服务端集成，用 MCP 打通内部业务系统并保证数据不出域。",
+    desc: "把 AI 从「单点问答」扩展为「能调用真实业务能力」的服务端集成，用 MCP 打通多个业务系统并保证数据不出域。",
     achievements: [
-      "架构升级：插件端演进为 MCP Client，经 SSE 长连接内部 3 个业务 MCP Server",
-      "工具封装：将 CRM（客户 / 商机）、数仓（指标查询）、工单（创建 / 流转）三套业务接口封装为 MCP 工具",
-      "检索增强：RAG 知识库检索增强结合 Ollama 本地 LLM 部署，敏感数据不出域",
+      "架构升级：插件端演进为 MCP Client，经 SSE 长连接多个业务 MCP Server",
+      "工具封装：将多套业务接口（客户 / 指标 / 流程）封装为 MCP 工具",
+      "检索增强：RAG 知识库结合本地 LLM 部署，敏感数据不出域",
       "流程编排：基于 N8N / Flowise 编排多流程自动化，串联多个业务环节",
     ],
     tech: [
@@ -311,7 +325,7 @@ export const projects: Project[] = [
       "N8N",
       "TypeScript",
     ],
-    badges: ["3 个 MCP Server", "数据不出域"],
+    badges: ["多个 MCP Server", "数据不出域"],
   },
 ];
 
@@ -347,6 +361,6 @@ export const openSources: OpenSource[] = [
 ];
 
 export const educations: Education[] = [
-  { school: "扬州大学", degree: "本科", major: "软件工程" },
-  { school: "南京交通职业技术学院", degree: "专科", major: "计算机网络" },
+  { school: "某本科院校", degree: "本科", major: "软件工程" },
+  { school: "某专科院校", degree: "专科", major: "计算机网络" },
 ];

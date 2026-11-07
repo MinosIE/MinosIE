@@ -3,7 +3,7 @@ import { onMounted, onUnmounted, ref, nextTick } from "vue";
 import Prism from "prismjs";
 import "prismjs/components/prism-css";
 import { compile } from "../utils/markdown";
-import { resumeMarkdown, injectResumeMailto } from "../data/resumeSource";
+import { resumeMarkdown, injectResumeContact } from "../data/resumeSource";
 
 /**
  * 动画简历：忠实复刻 jirengu「会动的简历」（github.com/jirengu-inc/animating-resume）
@@ -323,8 +323,8 @@ const phases: Phase[] = [
   { kind: "style", text: SEG2 },
 ];
 
-// 打字稿里只写短占位符 (mailto)；渲染成 HTML 后替换为真实 mailto，避免长 URL 在打字阶段暴露
-const renderedHtml = injectResumeMailto(compile(fullMarkdown).html);
+// 打字稿里只写短占位符 (contact)；渲染成 HTML 后替换为公开联系方式，避免长 URL 在打字阶段暴露
+const renderedHtml = injectResumeContact(compile(fullMarkdown).html);
 
 const currentMarkdown = ref("");
 const highlightedStyle = ref(""); // 增量高亮结果（已完成行缓存 + 当前行实时高亮）
